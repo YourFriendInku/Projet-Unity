@@ -5,8 +5,9 @@ public class CameraFollowing : MonoBehaviour
 {
     [SerializeField] GameObject player;
     [SerializeField] float high = 10f;
-    [SerializeField] float xEtender = 2f;
-    [SerializeField] float yExtender = 2f;
+    [SerializeField] float xExtender = 2f;
+    [SerializeField] float yExtender = 20f;
+    [SerializeField] float zExtender = -10f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,8 +20,8 @@ public class CameraFollowing : MonoBehaviour
     {
         if (player != null)
         {
-            Vector2 playerPosition = new Vector2(player.transform.position.x,player.transform.position.z);
-            transform.position = new Vector3(playerPosition.x + xEtender, high,playerPosition.y + yExtender);
+            Vector3 playerPosition = new Vector3(player.transform.position.x,player.transform.position.y,player.transform.position.z);
+            transform.position = new Vector3(playerPosition.x + xExtender, playerPosition.y + yExtender, playerPosition.z + zExtender);
         }
     }
 
