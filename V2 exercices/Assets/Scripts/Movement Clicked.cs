@@ -1,18 +1,15 @@
 using System.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class MovementClicked : MonoBehaviour
 {
     Coroutine coroutine;
+    Coroutine coroutineV2;
+    [SerializeField] float rotationSpeed;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -24,32 +21,36 @@ public class MovementClicked : MonoBehaviour
 
             if(Physics.Raycast(ray, out RaycastHit hit))
             {
-                Vector3 way = (transform.position - hit.point).normalized;
-                transform.LookAt(hit.point);
-                
+                Vector3 direction = (hit.point - transform.position).normalized;
 
-                if (coroutine != null) { 
-                    StopCoroutine(coroutine);
-                    
-                    
-                }
-                coroutine = StartCoroutine(OnBouge(way));
+                if (coroutine != null && coroutineV2 !=null) StopAllCoroutines();
+
+                coroutine = StartCoroutine(Translate(direction));
+                coroutineV2 = StartCoroutine(Rotate(direction));
             }
-
-            
         }
     }
 
-    private IEnumerator OnBouge(Vector3 theWay)
+    private IEnumerator Translate(Vector3 direction)
     {
+        
 
-        while((transform.position - theWay).magnitude > 0.5f)
+        while ((transform.position - direction).magnitude > 0.5f)
         {
-            transform.position -= theWay * Time.deltaTime; 
+            transform.position += direction * Time.deltaTime; 
             
             yield return null;
         }
-        
-        
+    }
+
+    private IEnumerator Rotate(Vector3 direction)
+    {
+        Quaternion finalRotation = Quaternion.LookRotation(direction);
+
+        while (transform.rotation != finalRotation)
+        {
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, finalRotation, rotationSpeed * Time.deltaTime);
+            yield return null;
+        }
     }
 }
